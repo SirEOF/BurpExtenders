@@ -11,6 +11,7 @@ class BurpExtender(IBurpExtender, IIntruderPayloadGeneratorFactory):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
 
+        callbacks.setExtensionName("Simple Fuzzer")
         callbacks.registerIntruderPayloadGeneratorFactory(self)
         return
 
