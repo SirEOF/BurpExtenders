@@ -1,10 +1,10 @@
 from burp import IBurpExtender
 from burp import IContextMenuFactory
-from burp import IHttpService
 
 from javax.swing import JMenuItem
 from java.util import List, ArrayList
 from java.net import URL
+from javax.swing import JOptionPane
 
 import threading
 import os
@@ -32,7 +32,9 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.sitemap_importer_from_file()
         return
 
-    def sitemap_importer_from_file(self, filename='/tmp/sitemap_urls.txt'):
+    def sitemap_importer_from_file(self):
+        filename = JOptionPane.showInputDialog("Import Links from a file")
+
         if os.path.exists(filename):
             for url in open(filename):  # Not to large.
                 url = url.strip()
@@ -41,7 +43,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 t.start()
             self.callbacks.printOutput('[*] All urls imported.')
         else:
-            self.callbacks.printOutput('[*] Put urls into {}'.format(filename))
+            self.callbacks.printOutput('[*] Put urls into {}'.format(self.filename))
 
     def sitemap_importer(self, http_url):
         java_URL = URL(http_url)
@@ -62,3 +64,4 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
 # https://portswigger.net/burp/extender/api/burp/IHttpService.html
 # https://support.portswigger.net/customer/en/portal/topics/719885-burp-extensions/questions?page=8
 # http://docs.oracle.com/javase/7/docs/api/java/net/URL.html#URL(java.lang.String)
+# http://stackoverflow.com/questions/12810460/joptionpane-input-dialog-box-program
