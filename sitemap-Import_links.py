@@ -35,7 +35,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
     def sitemap_importer_from_file(self):
         filename = JOptionPane.showInputDialog("Import Links from a file")
 
-        if os.path.exists(filename):
+        if filename and os.path.exists(filename):
             for url in open(filename):  # Not to large.
                 url = url.strip()
                 t = threading.Thread(target=self.sitemap_importer, args=[url])
@@ -43,7 +43,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 t.start()
             self.callbacks.printOutput('[*] All urls imported.')
         else:
-            self.callbacks.printOutput('[*] Put urls into {}'.format(self.filename))
+            self.callbacks.printOutput('[*] Please set a file in input box.')
 
     def sitemap_importer(self, http_url):
         java_URL = URL(http_url)
