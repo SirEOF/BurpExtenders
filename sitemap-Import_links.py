@@ -4,8 +4,9 @@ from burp import IContextMenuFactory
 from javax.swing import JMenuItem
 from java.util import List, ArrayList
 from java.net import URL
-from javax.swing import JOptionPane
-
+from javax import swing
+# from javax.swing import JOptionPane
+from javax.swing.filechooser import FileNameExtensionFilter
 import threading
 import os
 
@@ -32,8 +33,21 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.sitemap_importer_from_file()
         return
 
+    def custom_dialog(self):
+        filename = None
+        fChooser = swing.JFileChooser()
+        extfilter = swing.filechooser.FileNameExtensionFilter("OK", ["*"])
+        fChooser.addChoosableFileFilter(extfilter)
+        files = fChooser.showDialog(None, "URLs files")
+
+        if files == swing.JFileChooser.APPROVE_OPTION:
+            filename = fChooser.getSelectedFile().getPath()
+
+        return filename
+
     def sitemap_importer_from_file(self):
-        filename = JOptionPane.showInputDialog("Import Links from a file")
+        filename = self.custom_dialog()
+        # filename = JOptionPane.showInputDialog("Import Links from a file")
 
         if filename and os.path.exists(filename):
             for url in open(filename):  # Not to large.
@@ -43,7 +57,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 t.start()
             self.callbacks.printOutput('[*] All urls imported.')
         else:
-            self.callbacks.printOutput('[*] Please set a file in input box.')
+            self.callbacks.printOutput('[*] Please select a urls file.')
 
     def sitemap_importer(self, http_url):
         java_URL = URL(http_url)
